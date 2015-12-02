@@ -167,11 +167,34 @@
   (display guess)
   (define (close-enough? a b)(< (abs (- a b)) 0.00001 ))
   (let ((next (f guess))) (if (close-enough? guess next)
-                              ((newline)
-                              (display guess))
+                              0
                               (find-fixed-point f next))                                 
                                    ))
 
 (define (average-damp f)
   (lambda (x)(avg x (f x)))
+  )
+(define (cont-frac-iter f-n f-d k)
+  (define (iter res count)(if (<= count 0) res (iter (/ (f-n count)(+ (f-d count) res)) (- count 1))))
+  (iter 0 k)
+  )
+
+(define (cont-frac f-n f-d k)
+   (if (= k 1) 1 (/ (f-n k) (+ (f-d k) (cont-frac f-n f-d (- k 1))))
+  ))
+(define (calc-e)
+   (+ 2 (cont-frac-iter (lambda (x) 1.0) (lambda (k) (cond((= (remainder (+ k 1) 3) 0) (* 2 (/ (+ k 1) 3)))
+                                                          (else 1.0))) 100))
+  )
+
+(define (calc-tan radians k)
+ (cont-frac-iter (lambda (x) (if (= x 1) radians (-(* radians radians)))) (lambda (n) (- (* 2.0 n) 1.0)) k))
+
+(define dx 0.00001)
+(define (deriv f)
+   (lambda (x) (/ (- (f (+ x dx))(f x)) dx))
+  )
+
+(define (double-f f)
+  (lambda (x)(f(f x)))
   )
