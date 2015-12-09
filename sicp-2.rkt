@@ -62,11 +62,21 @@ a
   )
 (define rect1  (make-rect (make-segment (make-point 0 0)(make-point 20 0) )  (make-segment (make-point 0 10)(make-point 20 10) ) ))
 
-  
-  (define (car z)            
-   (if (= (gcd z 2) 1)      
-     0                      
-     (+ 1 (car (/ z 2))))) 
-  
+
 
 ; exercise 2.6
+(define zero (lambda (f)(lambda (x) x)))
+(define one (lambda (f)(lambda (x) (f x))))
+(define two (lambda (f)(lambda (x) (f (f x)))))
+(define (add-1 n) (lambda (f)(lambda (x) (f((n f) x)))))
+(define (add a b)(lambda (f)(lambda (x) ((a f)((b f) x)))))
+
+; exercise 2.7
+(define (make-interval a b)(cons a b))
+(define (upper-bound interval)(max (car interval)(cdr interval)))
+(define (lower-bound interval)(min (car interval)(cdr interval)))
+ (define (add-interval x y) 
+   (make-interval (+ (lower-bound x) (lower-bound y)) 
+                  (+ (upper-bound x) (upper-bound y)))) 
+(define (sub-interval x y) 
+   (add-interval x (make-interval (-(upper-bound y)) (-(lower-bound y)) ))) 
