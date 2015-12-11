@@ -14,7 +14,6 @@ a
                      ((< x 0)(- x))
                      (else 0)
                      ))
-(define (avg a b)(/ (+ a b) 2))
 
 (define (square x)(* x x))
 
@@ -77,6 +76,101 @@ a
 (define (lower-bound interval)(min (car interval)(cdr interval)))
  (define (add-interval x y) 
    (make-interval (+ (lower-bound x) (lower-bound y)) 
-                  (+ (upper-bound x) (upper-bound y)))) 
+                  (+ (upper-bound x) (upper-bound y))))
+; exercise 2.8
 (define (sub-interval x y) 
-   (add-interval x (make-interval (-(upper-bound y)) (-(lower-bound y)) ))) 
+   (add-interval x (make-interval (-(upper-bound y)) (-(lower-bound y)) )))
+
+; exercise 2.9
+(define (equal? a b)(= a b))
+(define (get-width interval)(/ (- (upper-bound interval) (lower-bound interval)) 2))
+(define (interval-equal? in1 in2 operation)(equal?  (abs(+ (get-width in1) (get-width in2)))  (get-width (operation in1 in2))))
+(define in1 (make-interval 2 5))
+(define in2 (make-interval 4 10))
+
+(define (mul-interval x y)
+(let ((p1 (* (lower-bound x) (lower-bound y)))
+(p2 (* (lower-bound x) (upper-bound y)))
+(p3 (* (upper-bound x) (lower-bound y)))
+(p4 (* (upper-bound x) (upper-bound y))))
+(make-interval (min p1 p2 p3 p4)
+(max p1 p2 p3 p4))))
+
+; exercise 2.10
+(define (div-interval x y)
+  (if (> (* (upper-bound y) (lower-bound y)) 0)
+  (mul-interval
+     x
+     (make-interval (/ 1.0 (upper-bound y))
+                    (/ 1.0 (lower-bound y))))
+  (error "Division error (interval spans 0)" y) 
+  ))
+
+
+; exercise 2.12
+(define (make-center-percent center percent)(make-interval (* center (- 1 (/ percent 100))) (* center (+ 1 (/ percent 100)))))
+(define (percent i)(* 100 (/ (- (upper-bound i) (center i)) (center i))))
+(define (center i)(/ (+ (lower-bound i) (upper-bound i)) 2))
+
+(define a (cons (list 1 2) (list 3 4)))
+(define b (cons a a))
+
+; exercise 2.17
+(define (last-pair l)
+  (let ((next (cdr l))) (if  (null? next) l (last-pair next)))
+  )
+
+; exercise 2.18
+(define (reverse l)
+  (define (reverse_iter res l)
+       (if (null? l) res (reverse_iter (cons (car l) res) (cdr l)))
+    )
+  (reverse_iter nil l)
+  )
+
+; exercise 2.19
+(define (cc amount coin-values)
+  (cond ((= amount 0) 1)
+        ((or (< amount 0) (no-more? coin-values)) 0)
+        (else
+         (+ (cc amount (except-first-denomination coin-values))
+            (cc (- amount (first-denomination coin-values)) coin-values)
+            )
+         )
+        )
+  )
+(define nil '())
+(define (first-denomination list) (car list))
+(define (except-first-denomination list) (cdr list))
+(define (no-more? list)(null? list ))
+(define us-coins (list 50 25 10 5 1))
+(define uk-coins (list 100 50 20 10 5 2 1 0.5))
+
+
+
+; exercise 2.20
+(define (same-parity . l)
+  (let ((re (remainder (car l) 2)))
+  (define (test? n)(= re (remainder n 2)))
+  (define (iter res ls)
+    (if (null? ls) (reverse res) (iter (if (test? (car ls)) (cons (car ls) res) res) (cdr ls)))
+    )
+  (iter nil l))
+  )
+
+(define (len list)(if (null? list) 0 (+ 1 (len (cdr list)))))
+(define (avg . l)
+  (define (iter res ls)
+    (if (null? ls) (/ res (len l)) (iter (+ res (car ls)) (cdr ls)))
+    )
+  (iter 0 l)
+  )
+
+
+
+
+
+
+
+
+
