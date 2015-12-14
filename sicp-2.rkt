@@ -166,11 +166,85 @@ a
   (iter 0 l)
   )
 
+; exercise 2.21
+(define (square-list items)
+(if (null? items)
+nil
+(cons (square (car items)) (square-list (cdr items)))))
+(define (square-list2 items)
+(map square items))
+
+
+; exercise 2.23
+(define (for-each nothing pro list)
+ (if (null? list) (newline) (for-each (pro (car list)) pro (cdr list)))
+  )
+
+
+(define (for-each2 f items)
+  (if (null? items)
+      (newline)
+      (let ()
+        (f (car items))
+        (for-each2 f (cdr items)))))
+
+(define v1 (list 1 2 3))
+(define v2 (list 4 5 6))
+(define (append list1 list2)
+(if (null? list1)
+list2
+(cons (car list1) (append (cdr list1) list2))))
+
+
+; exercise 2.27
+(define (deep-reverse l)
+  (define (reverse_iter res l)
+    (print res)
+    (print l)
+    (newline)
+       (if (null? l) res (reverse_iter (cons (if (pair? (car l)) (deep-reverse (car l)) (car l)) res) (cdr l)))
+    )
+  (reverse_iter nil l)
+  )
+
+; exercise 2.28
+(define (fringe l)
+  ; select/delete the first non-list element 
+  (define (selector l) (if (and (list? l)(not (null? l)))
+                           (if (null? (car l))(selector (cdr l)) (selector (car l)))
+                           l
+                           ))  
+ (define (deletor l) (if (and (list? l)(not (null? l)))
+                          (if (list? (car l))
+                           (if (null? (car l))  (deletor (cdr l)) (cons (deletor (car l)) (cdr l)) )
+                           (cdr l)
+                           )
+                          nil
+   )) 
+
+ (define (fringe_iter res l)
+       (if (null? l)
+           (reverse res)
+           (if (null? (selector l))
+               (fringe_iter res (deletor l))
+               (fringe_iter (cons (selector l) res) (deletor l)))
+           )
+    )
+  (fringe_iter nil l)
+  )
+
+(define v (list (list 1 2) (list 3 4)))
 
 
 
 
+(define (print x)
+  (newline)
+  (display x))
 
+
+; exercise 2.29
+; ?????????????????
 
 
 
